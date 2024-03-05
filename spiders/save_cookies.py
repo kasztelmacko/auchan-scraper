@@ -29,6 +29,11 @@ action_2 = ActionChains(driver)
 element = driver.find_element(By.XPATH, "//*[@aria-label='Zamknij okno dialogowe']")
 action_2.move_to_element(element).click().perform()
 
+# get cookies when the full website is loaded
+start_time = time.time()
+while (time.time() - start_time) < 30:
+    driver.execute_script("window.scrollBy(0, 1500);")
+    time.sleep(3)
 cookies = driver.get_cookies()
 
 # save the cookies to a file
