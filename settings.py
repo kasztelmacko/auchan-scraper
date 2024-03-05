@@ -7,10 +7,10 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = "auchan"
+BOT_NAME = "auchan_scraper"
 
-SPIDER_MODULES = ["auchan.spiders"]
-NEWSPIDER_MODULE = "auchan.spiders"
+SPIDER_MODULES = ["auchan_scraper.spiders"]
+NEWSPIDER_MODULE = "auchan_scraper.spiders"
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
@@ -65,8 +65,8 @@ DOWNLOADER_MIDDLEWARES = {
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    "auchan.pipelines.DuplicatesPipeline": 100,
-    "auchan.pipelines.SavingTosqlitePipeline": 200,
+    "auchan_scraper.pipelines.DuplicatesPipeline": 100,
+    "auchan_scraper.pipelines.SavingTosqlitePipeline": 200,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

@@ -41,6 +41,7 @@ class SavingTosqlitePipeline(object):
         return self.connection
 
     def process_item(self, item, spider):
+        print("Processing item in SavingTosqlitePipeline")
         self.store_db(item)
         return item
     

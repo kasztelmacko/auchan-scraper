@@ -1,7 +1,7 @@
 from typing import Iterable
 import scrapy
-from auchan.items import AuchanItem
-from auchan.itemloader import AuchanProductLoader
+from auchan_scraper.items import AuchanItem
+from auchan_scraper.itemloader import AuchanProductLoader
 import json
 
 class ShopSpider(scrapy.Spider):
