@@ -31,7 +31,7 @@ action_2.move_to_element(element).click().perform()
 
 # get cookies when the full website is loaded
 start_time = time.time()
-while (time.time() - start_time) < 30:
+while (time.time() - start_time) < 60:
     driver.execute_script("window.scrollBy(0, 1500);")
     time.sleep(3)
 cookies = driver.get_cookies()
