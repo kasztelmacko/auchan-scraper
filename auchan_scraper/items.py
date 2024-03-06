@@ -11,4 +11,3 @@ class AuchanItem(scrapy.Item):
     category_name = scrapy.Field()
     price = scrapy.Field()
     volume = scrapy.Field()
-    

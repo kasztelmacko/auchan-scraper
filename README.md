@@ -1,4 +1,4 @@
-1. pip install -r requirements.txt
+1. uv pip install -r requirements.txt
 2. python database.py
 3. python save_cookies.py
 4. scrapy crawl shop
