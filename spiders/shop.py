@@ -1,7 +1,8 @@
 import scrapy
+import json
+import re
 from auchan_scraper.items import AuchanItem
 from auchan_scraper.itemloader import AuchanProductLoader
-import json
 from auchan_scraper.utils import cookies, headers
 
 class ShopSpider(scrapy.Spider):
@@ -9,16 +10,29 @@ class ShopSpider(scrapy.Spider):
     allowed_domains = ["auchan.pl"]
 
     def start_requests(self):
-        url = "https://zakupy.auchan.pl/api/v2/cache/products?categoryId=28821&itemsPerPage=15&page=1&cacheSegmentationCode=019_DEF&hl=pl"
+        url = "https://zakupy.auchan.pl/lp-najtaniej-w-auchan"
+        yield scrapy.Request(url, cookies=cookies, headers=headers, callback=self.parse_categories)
+
+    def parse_categories(self, response):
+        category_ids = response.css('*::text').re(r'\b\d{5}\b')
+        category_ids = list(map(int, category_ids))
+        for category_id in category_ids:
+            yield from self.create_requests(category_id)
+
+    def create_requests(self, category_id):
+        url = f"https://zakupy.auchan.pl/api/v2/cache/products?categoryId={category_id}&itemsPerPage=15&page=1&cacheSegmentationCode=019_DEF&hl=pl"
         yield scrapy.Request(url, cookies=cookies, headers=headers, callback=self.parse)
 
     def parse(self, response):
         data = json.loads(response.body)
         page_count = data['pageCount'] # get the number of pages for the category
 
+        # get category_id from the URL
+        category_id = re.search(r'categoryId=(\d+)', response.url).group(1)
+
         # generate start_urls and make requests
         for i in range(2, page_count + 1):
-            url = f"https://zakupy.auchan.pl/api/v2/cache/products?categoryId=28821&itemsPerPage=15&page={i}&cacheSegmentationCode=019_DEF&hl=pl"
+            url = f"https://zakupy.auchan.pl/api/v2/cache/products?categoryId={category_id}&itemsPerPage=15&page={i}&cacheSegmentationCode=019_DEF&hl=pl"
             yield scrapy.Request(url, cookies=cookies, headers=headers, callback=self.parse_products)
 
     def parse_products(self, response):
