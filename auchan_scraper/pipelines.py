@@ -37,9 +37,7 @@ class SavingTosqlitePipeline(object):
     def create_connection(self):
         try:
             current_path = os.path.dirname(os.path.realpath(__file__))
-            self.connection = sqlite3.connect(
-                os.path.join(current_path, "..", "auchan.db")
-            )
+            self.connection = sqlite3.connect(os.path.join(current_path, "auchan.db"))
             self.curr = self.connection.cursor()
             print("Połączono z bazą danych")
         except sqlite3.Error as e:
