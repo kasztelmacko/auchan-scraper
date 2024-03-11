@@ -1,5 +1,5 @@
 1. pip install -r requirements.txt
-2. python database.py
+2. python auchan_scraper/database.py
 3. scrapy crawl shop
 
 # TODO
