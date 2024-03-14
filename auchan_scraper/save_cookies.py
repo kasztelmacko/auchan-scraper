@@ -34,10 +34,16 @@ element = driver.find_element(By.XPATH, "//*[@aria-label='Zamknij okno dialogowe
 action_2.move_to_element(element).click().perform()
 
 # get cookies when the full website is loaded
-start_time = time.time()
-while (time.time() - start_time) < 60:
-    driver.execute_script("window.scrollBy(0, 1500);")
-    time.sleep(3)
+last_height = driver.execute_script("return document.body.scrollHeight")
+while True:
+    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    time.sleep(3)  # Wait for the page to load
+
+    new_height = driver.execute_script("return document.body.scrollHeight")
+    if new_height == last_height:  # If heights are the same it means end of scrolling
+        break
+    last_height = new_height
+    
 cookies = driver.get_cookies()
 
 response = requests.get('https://zakupy.auchan.pl/shop/artykuly-spozywcze/mleko-nabial-jaja/maslo-margaryny-tluszcze.c-28821')
