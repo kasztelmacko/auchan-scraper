@@ -15,6 +15,17 @@ def create_table():
         volume text
     )"""
     )
+
+    curr.execute("""DROP TABLE IF EXISTS category""")
+    curr.execute(
+        """CREATE TABLE category(
+        id integer,
+        url text,
+        cat_1 text,
+        cat_2 text,
+        product_name text
+    )"""
+    )
     conn.commit()
     conn.close()
 
