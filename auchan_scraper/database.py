@@ -30,4 +30,5 @@ def create_table():
     conn.close()
 
 
+
 create_table()
