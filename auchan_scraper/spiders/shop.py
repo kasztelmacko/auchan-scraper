@@ -38,22 +38,25 @@ class ShopSpider(scrapy.Spider):
         data = json.loads(response.body)
         page_count = data["pageCount"]  # get the number of pages for the category
 
-        # generate start_urls and make requests
+        # Loop over the products on the current page
+        for product in data["results"]:
+            loader = AuchanProductLoader(item=AuchanItem(), selector=product)
+            fields = {
+                "name": product.get("defaultVariant", {}).get("name", "Unknown"),
+                "category_name": product.get("categoryName", "Unknown"),
+                "price": product.get("defaultVariant", {}).get("price", {}).get("gross", "Unknown"),
+                "volume": product.get("defaultVariant", {}).get("itemVolumeInfo", "Unknown"),
+            }
+            for field, value in fields.items():
+                loader.add_value(field, value)
+            yield loader.load_item()
+
+        # Generate start_urls and make requests for subsequent pages
         for i in range(2, page_count + 1):
             url = f"https://zakupy.auchan.pl/api/v2/cache/products?categoryId={self.category_id}&itemsPerPage=15&page={i}&cacheSegmentationCode=019_DEF&hl=pl"
             yield scrapy.Request(
                 url,
                 cookies=self.cookies,
                 headers=self.headers,
-                callback=self.parse_products,
-            )
-
-    def parse_products(self, response):
-        data = json.loads(response.body)
-        for product in data["results"]:
-            loader = AuchanProductLoader(item=AuchanItem(), selector=product)
-            loader.add_value("name", product["defaultVariant"]["name"])
-            loader.add_value("category_name", product["categoryName"])
-            loader.add_value("price", product["defaultVariant"]["price"]["gross"])
-            loader.add_value("volume", product["defaultVariant"]["itemVolumeInfo"])
-            yield loader.load_item()
+                callback=self.parse,
+        )
