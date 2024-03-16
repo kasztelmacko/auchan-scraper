@@ -160,4 +160,5 @@ cython_debug/
 #.idea/
 auchan_scraper/headers.json
 auchan_scraper/cookies.json
+auchan_scraper/params.json
 auchan_scraper/auchan.db
