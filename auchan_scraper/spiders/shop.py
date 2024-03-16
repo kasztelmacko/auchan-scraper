@@ -7,6 +7,7 @@ from auchan_scraper.itemloader import AuchanProductLoader
 from auchan_scraper.items import AuchanItem
 
 
+
 class ShopSpider(scrapy.Spider):
     name = "shop"
     allowed_domains = ["auchan.pl"]
@@ -18,12 +19,20 @@ class ShopSpider(scrapy.Spider):
     headers_path = os.path.join(os.path.dirname(__file__), "..", "headers.json")
     with open(headers_path, "r") as f:
         headers = json.load(f)
+    
+    params_path = os.path.join(os.path.dirname(__file__), "..", "params.json")
+    with open(params_path, "r") as f:
+        params = json.load(f)
+
+    start_url = params.get('start_url')
+    category_id = params.get('category_id')
 
     def start_requests(self):
-        url = "https://zakupy.auchan.pl/api/v2/cache/products?categoryId=28821&itemsPerPage=15&page=1&cacheSegmentationCode=019_DEF&hl=pl"
-        yield scrapy.Request(
-            url, cookies=self.cookies, headers=self.headers, callback=self.parse
-        )
+        if self.start_url is not None:
+            url = f"https://zakupy.auchan.pl/api/v2/cache/products?categoryId={self.category_id}&itemsPerPage=15&page=1&cacheSegmentationCode=019_DEF&hl=pl"
+            yield scrapy.Request(
+                url, cookies=self.cookies, headers=self.headers, callback=self.parse
+            )
 
     def parse(self, response):
         data = json.loads(response.body)
@@ -31,7 +40,7 @@ class ShopSpider(scrapy.Spider):
 
         # generate start_urls and make requests
         for i in range(2, page_count + 1):
-            url = f"https://zakupy.auchan.pl/api/v2/cache/products?categoryId=28821&itemsPerPage=15&page={i}&cacheSegmentationCode=019_DEF&hl=pl"
+            url = f"https://zakupy.auchan.pl/api/v2/cache/products?categoryId={self.category_id}&itemsPerPage=15&page={i}&cacheSegmentationCode=019_DEF&hl=pl"
             yield scrapy.Request(
                 url,
                 cookies=self.cookies,
