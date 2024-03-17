@@ -45,6 +45,7 @@ class ShopSpider(scrapy.Spider):
                 "name": product.get("defaultVariant", {}).get("name", "Unknown"),
                 "category_name": product.get("categoryName", "Unknown"),
                 "price": product.get("defaultVariant", {}).get("price", {}).get("gross", "Unknown"),
+                "currency": product.get("defaultVariant", {}).get("price", {}).get("currency", "Unknown"),
                 "volume": product.get("defaultVariant", {}).get("itemVolumeInfo", "Unknown"),
             }
             for field, value in fields.items():

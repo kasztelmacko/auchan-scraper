@@ -9,11 +9,13 @@ def create_table():
     curr.execute("""DROP TABLE IF EXISTS auchan""")
     curr.execute(
         """CREATE TABLE auchan(
+        product_id integer PRIMARY KEY AUTOINCREMENT,
         product_name text,
         category_name text,
-        price text,
-        volume text
-    )"""
+        price integer,
+        currency text,
+        volume integer)
+    """
     )
 
     curr.execute("""DROP TABLE IF EXISTS category""")
