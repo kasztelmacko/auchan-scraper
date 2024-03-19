@@ -14,7 +14,8 @@ def create_table():
         category_name text,
         price integer,
         currency text,
-        volume integer)
+        volume integer,
+        unit text)
     """
     )
 

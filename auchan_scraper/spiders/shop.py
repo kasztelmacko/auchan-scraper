@@ -47,6 +47,7 @@ class ShopSpider(scrapy.Spider):
                 "price": product.get("defaultVariant", {}).get("price", {}).get("gross", "Unknown"),
                 "currency": product.get("defaultVariant", {}).get("price", {}).get("currency", "Unknown"),
                 "volume": product.get("defaultVariant", {}).get("itemVolumeInfo", "Unknown"),
+                "unit": product.get("defaultVariant", {}).get("itemVolumeInfo", "Unknown"),
             }
             for field, value in fields.items():
                 loader.add_value(field, value)

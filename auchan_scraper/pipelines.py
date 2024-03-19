@@ -53,8 +53,8 @@ class SavingTosqlitePipeline(object):
 
     def store_db(self, item):
         self.curr.execute(
-            """ insert into auchan (product_name, category_name, price, currency, volume) values (?, ?, ?, ?, ?)""",
-            (item["name"], item["category_name"], item["price"], item["currency"], item["volume"]),
+            """ insert into auchan (product_name, category_name, price, currency, volume, unit) values (?, ?, ?, ?, ?, ?)""",
+            (item["name"], item["category_name"], item["price"], item["currency"], item["volume"], item["unit"]),
         )
         self.connection.commit()
         return self.curr
