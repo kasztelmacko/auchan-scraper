@@ -13,4 +13,6 @@ class AuchanItem(scrapy.Item):
     currency = scrapy.Field()
     volume = scrapy.Field()
     unit = scrapy.Field()
-    
+    volume_info = scrapy.Field()
+    package_unit = scrapy.Field()
+    package_size = scrapy.Field()

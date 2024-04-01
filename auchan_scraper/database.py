@@ -15,7 +15,10 @@ def create_table():
         price integer,
         currency text,
         volume integer,
-        unit text)
+        unit text,
+        volume_info text,
+        package_unit text,
+        package_size integer)
     """
     )
 
@@ -31,7 +34,6 @@ def create_table():
     )
     conn.commit()
     conn.close()
-
 
 
 create_table()

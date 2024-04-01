@@ -159,6 +159,7 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 auchan_scraper/headers.json
+auchan_scraper/categories.json
 auchan_scraper/cookies.json
 auchan_scraper/params.json
 auchan_scraper/auchan.db
