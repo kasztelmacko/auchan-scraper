@@ -22,18 +22,12 @@ def create_table():
     """
     )
 
-    curr.execute("""DROP TABLE IF EXISTS category""")
-    curr.execute(
-        """CREATE TABLE category(
-        id integer,
-        url text,
-        cat_1 text,
-        cat_2 text,
-        product_name text
-    )"""
-    )
-    conn.commit()
-    conn.close()
-
+def select_all():
+    current_path = os.path.dirname(os.path.realpath(__file__))
+    conn = sqlite3.connect(os.path.join(current_path, "auchan.db"))
+    curr = conn.cursor()
+    curr.execute("SELECT * FROM auchan")
+    rows = curr.fetchall()
+    return rows
 
 create_table()
