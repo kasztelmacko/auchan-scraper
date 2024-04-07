@@ -71,7 +71,6 @@ class ShopSpider(scrapy.Spider):
         subcategories = random.sample(subcategories, self.number)
 
         for subcategory_url, category_id in subcategories:
-
             self.headers["referer"] = subcategory_url
             print(category_id, subcategory_url)
             url = f"https://zakupy.auchan.pl/api/v2/cache/products?categoryId={category_id}&itemsPerPage=15&page=1&cacheSegmentationCode=019_DEF&hl=pl"

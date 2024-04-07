@@ -2,10 +2,14 @@ import json
 import logging
 import re
 import time
-from typing import Optional
+from typing import Dict, List, Optional, Tuple
 
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException, TimeoutException
+from selenium.common.exceptions import (
+    ElementClickInterceptedException,
+    NoSuchElementException,
+    TimeoutException,
+)
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -13,7 +17,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 logging.basicConfig(
     encoding="utf-8",
-    level=logging.DEBUG,
+    level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
     handlers=[logging.FileHandler("get_categories_debug.log"), logging.StreamHandler()],
 )
@@ -48,13 +52,22 @@ def accept_popups(
         "//*[@aria-label='Zamknij okno dialogowe']",
         "//*[@id='accept-recommended-btn-handler']",
     ]
+
     for xpath_selector in xpath_selectors:
+        elements = driver.find_elements(By.XPATH, xpath_selector)
+        if not elements:
+            logging.warning(f"Popup {xpath_selector} not present")
+            continue
         try:
             logging.info(f"Clicking on popup {xpath_selector}")
             wait = WebDriverWait(driver, timeout=10)
             element = wait.until(EC.element_to_be_clickable((By.XPATH, xpath_selector)))
             element.click()
-        except (NoSuchElementException, TimeoutException) as e:
+        except (
+            NoSuchElementException,
+            TimeoutException,
+            ElementClickInterceptedException,
+        ) as e:
             print(xpath_selector, e)
             logging.error(f"Popup {xpath_selector} not found: {e}")
 
@@ -69,20 +82,34 @@ def elements_have_text(driver: webdriver.Chrome, selector: str):
     return all(element.text.strip() != "" for element in elements)
 
 
-def get_categories(url: str):
+def get_categories(
+    url: str, limit: Optional[int] = None
+) -> Tuple[List[Dict], List[Dict]]:
     driver = initialize_driver()
+
     driver = accept_popups(driver, url=url)
 
     logging.info(f"Visiting {url}")
-    # driver.get(url)
 
     cat_selector = f'a[href*="{get_url_segments(url)}"]'
     wait = WebDriverWait(driver, timeout=10)
     wait.until(lambda driver: elements_have_text(driver, cat_selector))
+
     categories = driver.find_elements(By.CSS_SELECTOR, cat_selector)
 
+    if not limit:
+        limit = len(categories)
+
     categories = [
-        {"category": category.text, "url": category.get_attribute("href")}
+        category for cat_num, category in enumerate(categories) if cat_num < limit
+    ]
+
+    categories = [
+        {
+            "category": category.text,
+            "url": category.get_attribute("href"),
+            "subcategories": [],
+        }
         for category in categories
     ]
 
