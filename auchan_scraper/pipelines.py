@@ -3,6 +3,7 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 
+import logging
 import os
 import sqlite3
 
@@ -37,24 +38,34 @@ class SavingTosqlitePipeline(object):
     def create_connection(self):
         try:
             current_path = os.path.dirname(os.path.realpath(__file__))
-            self.connection = sqlite3.connect(
-                os.path.join(current_path, "auchan.db")
-            )
+            self.connection = sqlite3.connect(os.path.join(current_path, "auchan.db"))
             self.curr = self.connection.cursor()
-            print("Połączono z bazą danych")
+            print("Connected to the database")
+            logging.info("Connected to the database")
         except sqlite3.Error as e:
-            print(f"Błąd połączenia z bazą danych: {e}")
+            print(f"Database connection error: {e}")
+            logging.info(f"Database connection error: {e}")
         return self.connection
 
     def process_item(self, item, spider):
-        print("Processing item in SavingTosqlitePipeline")
+        logging.debug(f"Processing item {item.get('name')} in SavingTosqlitePipeline")
         self.store_db(item)
         return item
 
     def store_db(self, item):
         self.curr.execute(
-            """ insert into auchan (product_name, category_name, price, volume) values (?, ?, ?, ?)""",
-            (item["name"], item["category_name"], item["price"], item["volume"]),
+            """ insert into auchan (product_name, category_name, price, currency, volume, unit, volume_info, package_unit, package_size) values (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (
+                item["name"],
+                item["category_name"],
+                item["price"],
+                item["currency"],
+                item["volume"],
+                item["unit"],
+                item["volume_info"],
+                item["package_unit"],
+                item["package_size"],
+            ),
         )
         self.connection.commit()
         return self.curr
